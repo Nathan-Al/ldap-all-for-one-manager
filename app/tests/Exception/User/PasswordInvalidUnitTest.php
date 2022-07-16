@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests;
+namespace App\Tests\Exception\User;
 
 use App\Exception\User\PasswordInvalid;
 use PHPUnit\Framework\TestCase;
@@ -13,9 +13,9 @@ class PasswordInvalidUnitTest extends TestCase
 
         $this->assertNotNull($exception->getMessage());
 
+        $this->assertNotNull($exception->getCode());
+        $this->assertEquals(1003, $exception->getCode());
         $this->assertNotNull($exception->getStatusCode());
-        $this->assertEquals(1003, $exception->getStatusCode());
-        $this->assertNotNull($exception->getHttpErrorCode());
-        $this->assertEquals(403, $exception->getHttpErrorCode());
+        $this->assertEquals(403, $exception->getStatusCode());
     }
 }

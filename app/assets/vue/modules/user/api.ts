@@ -1,6 +1,8 @@
 import axios from "axios";
 
 import { IListResponse, ReadWriteApi } from "../../api";
+import { ICriteria } from "../../interfaces/criteria";
+import { ISort } from "../../interfaces/sort";
 
 import { IUser, IUserVerification, IUserPasswordChange } from "./interfaces";
 
@@ -24,11 +26,9 @@ export class UserAPI extends ReadWriteApi<IUser> {
    * @param page page number.
    * @param size page size.
    */
-  getAll(page: number, size: number) {
-    // TODO Make getAll work without pagination to retrieve all (with size = -1)
-    // TODO Rename items to size
+  getAll(page: number, size: number, filters: ICriteria = null, orders: ISort = null) {
     return axios.get<IListResponse<IUser>>(`${this.base}/${this.rwPrefix}`, {
-      params: { page: page, items: size },
+      params: { page: page, size: size, filters: filters, orders: orders },
     });
   }
 
@@ -37,16 +37,13 @@ export class UserAPI extends ReadWriteApi<IUser> {
     return axios.post<string>(`${this.base}/${this.roPrefix}`, user);
   }
 
-  getAllByUsername(username: string) {
-    return axios.get<Array<IUser>>(`${this.base}/admin/users`, { params: { username: username } });
-  }
-
   getCurrentUser() {
     return axios.get<IUser>(`${this.base}/${this.roPrefix}`);
   }
   passwordChange(newPassword: IUserPasswordChange) {
     return axios.put<void>(`${this.base}/${this.roPrefix}/password`, newPassword);
   }
+
   disableAccount() {
     return axios.put<any>(`${this.base}/${this.roPrefix}/disable`);
   }
@@ -56,5 +53,9 @@ export class UserAPI extends ReadWriteApi<IUser> {
   }
   requestCode() {
     return axios.post<void>(`${this.base}/${this.roPrefix}/verify/resend`);
+  }
+
+  setEnable(userId: string, enabled: boolean) {
+    return axios.put<any>(`${this.base}/${this.rwPrefix}/${userId}/set-enable`, enabled);
   }
 };

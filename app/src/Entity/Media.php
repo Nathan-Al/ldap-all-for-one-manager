@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Media
 {
-    use Metadata;
+    use EntityTrait;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -39,6 +39,9 @@ class Media
         return $this->name;
     }
 
+    /**
+     * @return static
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -51,6 +54,9 @@ class Media
         return $this->filename;
     }
 
+    /**
+     * @return static
+     */
     public function setFilename(string $filename): self
     {
         $this->filename = $filename;
@@ -63,6 +69,9 @@ class Media
         return $this->description;
     }
 
+    /**
+     * @return static
+     */
     public function setDescription(?string $description): self
     {
         $this->description = $description;

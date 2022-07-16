@@ -18,7 +18,7 @@ axios.interceptors.request.use(function(config) {
 
 router.beforeEach(async (to: Route, from: Route, next: any) => {
   const token = localStorage.getItem("token");
-  if (token) {
+  if (token && !store.state.auth.isLoggedIn()) {
     await store.dispatch("auth/getAuthUser");
   }
 
@@ -26,7 +26,7 @@ router.beforeEach(async (to: Route, from: Route, next: any) => {
     if (!store.state.auth.isLoggedIn()) {
       return next({ name: "Login" });
     }
-    let isAdmin = !!store.state.auth.authUser.roles.includes("ROLE_ADMIN");
+    let isAdmin = store.state.auth.hasRole("ADMIN");
     if (!isAdmin) {
       return next({ name: "Error" });
     } else {
@@ -95,6 +95,8 @@ import {
   faEllipsisH,
   faBan,
   faInfoCircle,
+  faQuestion,
+  faQuestionCircle,
   faExclamationTriangle,
   faExclamationCircle,
   faArrowUp,
@@ -110,7 +112,15 @@ import {
   faCaretDown,
   faCaretUp,
   faUser,
+  faUserCheck,
+  faUserTie,
+  faUserClock,
+  faUserSecret,
   faMagic,
+  faEdit,
+  faCopy,
+  faSave,
+  faTrash,
   faFilter,
   faSignInAlt,
   faSignOutAlt,
@@ -119,6 +129,12 @@ import {
   faCalendarAlt,
   faTimesCircle,
   faEnvelope,
+  faCalendar,
+  faClock,
+  faUsers,
+  faCogs,
+  faImages,
+  faBook,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
@@ -135,6 +151,8 @@ library.add(
   faEllipsisH,
   faBan,
   faInfoCircle,
+  faQuestion,
+  faQuestionCircle,
   faExclamationTriangle,
   faExclamationCircle,
   faArrowUp,
@@ -150,7 +168,15 @@ library.add(
   faCaretDown,
   faCaretUp,
   faUser,
+  faUserCheck,
+  faUserTie,
+  faUserClock,
+  faUserSecret,
   faMagic,
+  faEdit,
+  faCopy,
+  faSave,
+  faTrash,
   faFilter,
   faSignInAlt,
   faSignOutAlt,
@@ -158,7 +184,13 @@ library.add(
   faDownload,
   faCalendarAlt,
   faTimesCircle,
-  faEnvelope
+  faEnvelope,
+  faCalendar,
+  faClock,
+  faUsers,
+  faCogs,
+  faImages,
+  faBook,
 );
 Vue.component("vue-fontawesome", FontAwesomeIcon);
 

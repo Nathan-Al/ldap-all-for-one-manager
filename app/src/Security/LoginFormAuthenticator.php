@@ -57,13 +57,10 @@ class LoginFormAuthenticator extends AbstractGuardAuthenticator
         if (!isset($credentials['username'])) {
             return null;
         }
-        $username = $credentials['username'];
+        $usernameOrEmail = $credentials['username'];
 
-        $user = $this->userRepository->findOneBy(['username' => $username]);
-
-        if (!$user) {
-            $user = $this->userRepository->findOneBy(['email' => $username]);
-        }
+        // Load user by username or email
+        $user = $this->userRepository->loadUserByUsername($usernameOrEmail);
 
         return $user;
     }
@@ -85,13 +82,21 @@ class LoginFormAuthenticator extends AbstractGuardAuthenticator
         return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
     }
 
+    /**
+     * @return JsonResponse
+     */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         return new JsonResponse([], Response::HTTP_UNAUTHORIZED);
     }
 
+    /**
+     * @return \Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
+        $token->setAttribute('source', 'local');
+        $token->setAttribute('provider', $providerKey);
         return $this->successHandler->onAuthenticationSuccess($request, $token);
     }
 

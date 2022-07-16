@@ -1,10 +1,12 @@
-# **LDAP All-For-One Manager** Documentation site
+# ![icon](assets/icon.png) **LDAP One-For-All** Documentation
 
-**LDAP All-For-One Manager**: A web based LDAP Manager for everyone.
+**LDAP One-For-All**: A web based LDAP Manager for everyone.
 
-The objective of the project is to provide a user-friendly web application to manage LDAP account, reset password, explore the LDAP and others.
+The objective of the project is to provide a user-friendly web application to manage LDAP account, reset password, explore the LDAP and much more, "One application for all LDAP users."
 
 It comes with full build / tests / deploy automation while providing as much "_standard_" features as usually found in recent web applications.
+
+:construction: **This project is still in development!**
 
 Similar applications and inspirations:
 
@@ -27,6 +29,7 @@ This project uses the following technologies:
 
 -   [Vue.js](https://vuejs.org/) frontend with:
     -   full [TypeScript](https://www.typescriptlang.org/) support
+    -   [Vuex](https://vuex.vuejs.org/) state management and [axios](https://github.com/axios/axios) HTTP client
     -   full [Sass](https://sass-lang.com/) support
     -   [Bulma](https://bulma.io/) with [Buefy](https://buefy.org/) integration
     -   [WebPack](https://webpack.js.org/) to build efficiently assets
@@ -46,12 +49,17 @@ This project uses the following technologies:
     -   [Codacy](https://www.codacy.com/) code quality and code coverage review
     -   [Snyk](https://snyk.io/) security review
 
+-   Monitoring, Reporting and SEO:
+    -   Integration with Google Analytics and Matomo
+    -   Integration with Prometheus / Grafana and custom metrics possible (POC)
+    -   Integration with ELK Stack possible (POC)
+
 -   Source Code Management templates:
     -   GitHub [Issue and PR templates](https://docs.github.com/en/github/building-a-strong-community/configuring-issue-templates-for-your-repository)
     -   GitLab [Issue and MR templates](https://docs.gitlab.com/ee/user/project/description_templates.html)
 
 -   Ready to Code:
-    -   [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Monogramm/ldap-all-for-one-manager)
+    -   [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/Monogramm/ldap-one-for-all)
 
 ## Architecture diagram
 
@@ -60,6 +68,7 @@ This project was initialized from [Monogramm/vue-symfony-starter](https://github
 ![Architecture Production Diagram](architecture.svg)
 
 Directory structure:
+
 -   `app`: The main application directory
     -   `assets`: everything regarding the Frontend VUE app
         -   `i18n`: Frontend app translations
@@ -87,8 +96,24 @@ Directory structure:
 
 ## How to use
 
-Check repository on GitHub for details: <https://github.com/Monogramm/ldap-all-for-one-manager>
+Check repository on GitHub for details: <https://github.com/Monogramm/ldap-one-for-all>
 
 ## Contributing
 
-For information about contributing, see the [Contributing page](https://github.com/Monogramm/ldap-all-for-one-manager/blob/main/CONTRIBUTING.md).
+For information about contributing, see the [Contributing page](https://github.com/Monogramm/ldap-one-for-all/blob/main/CONTRIBUTING.md).
+
+## License
+
+For information about license, see the [license page](https://github.com/Monogramm/ldap-one-for-all/blob/main/LICENSE).
+
+## Screenshots
+
+![Mobile Landing page](assets/screenshot_m-00.png)
+
+![Landing page](assets/screenshot_00.png)
+
+![Home page](assets/screenshot_01.png)
+
+![Admin page](assets/screenshot_02.png)
+
+![Edit page](assets/screenshot_03.png)

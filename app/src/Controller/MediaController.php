@@ -36,19 +36,27 @@ class MediaController extends AbstractController
         $page = (int) $request->get('page', 1);
         $itemsPerPage = (int) $request->get('size', 20);
 
-        $medias = $repository->findAllByPage($page, $itemsPerPage);
+        $filters = json_decode($request->get('filters', '[]'), true);
+        $orders  = json_decode($request->get('orders', '{"name":"ASC"}'), true);
+
+        if ($page > 0 && $itemsPerPage > 0) {
+            $medias = $repository->findAllByPage($page, $itemsPerPage, $filters, $orders);
+        } else {
+            $medias = $repository->findAll($filters, $orders);
+        }
 
         $total = count($medias);
+        $results = array();
         foreach ($medias as $key => $media) {
             if ($media->getFilename()) {
                 $media->setFilename('/'.$publicUploadsPath.'/'.$media->getFilename());
             }
-            $medias[$key] = $serializer->normalize($media, Media::class);
+            $results[$key] = $serializer->normalize($media, Media::class);
         }
 
         return new JsonResponse([
             'total' => $total,
-            'items' => $medias
+            'items' => $results
         ]);
     }
 
@@ -77,7 +85,7 @@ class MediaController extends AbstractController
     public function createMedia(
         Request $request,
         SerializerInterface $serializer,
-        EntityManagerInterface $em,
+        EntityManagerInterface $emi,
         FileUploader $fileUploader,
         string $publicUploadsPath
     ): JsonResponse {
@@ -102,8 +110,8 @@ class MediaController extends AbstractController
             ''
         );
 
-        $em->persist($dto);
-        $em->flush();
+        $emi->persist($dto);
+        $emi->flush();
 
         $dto->setFilename('/'.$publicUploadsPath.'/'.$dto->getFilename());
 
@@ -119,7 +127,7 @@ class MediaController extends AbstractController
      */
     public function editMediaById(
         Media $media,
-        EntityManagerInterface $em,
+        EntityManagerInterface $emi,
         Request $request,
         SerializerInterface $serializer,
         FileUploader $fileUploader,
@@ -150,8 +158,8 @@ class MediaController extends AbstractController
             [ AbstractNormalizer::OBJECT_TO_POPULATE => $media ]
         );
 
-        $em->persist($dto);
-        $em->flush();
+        $emi->persist($dto);
+        $emi->flush();
 
         if ($file) {
             // Delete previous file if new file sent
@@ -170,14 +178,14 @@ class MediaController extends AbstractController
      */
     public function deleteMedia(
         Media $media,
-        EntityManagerInterface $em,
+        EntityManagerInterface $emi,
         Filesystem $filesystem,
         string $publicUploadsDir
     ): JsonResponse {
         $previousFilename = $media->getFilename();
 
-        $em->remove($media);
-        $em->flush();
+        $emi->remove($media);
+        $emi->flush();
 
         if ($previousFilename) {
             $filesystem->remove($publicUploadsDir . '/' . $previousFilename);

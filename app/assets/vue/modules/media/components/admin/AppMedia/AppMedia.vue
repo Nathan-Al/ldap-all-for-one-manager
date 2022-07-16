@@ -57,11 +57,12 @@
 
       <b-button
         type="is-primary"
+        icon-left="save"
         native-type="submit"
         :loading="isLoading"
         @click="submit"
       >
-        {{ $t(isEdit ? 'common.edit' : 'common.create') }}
+        {{ $t(isEdit ? 'common.update' : 'common.create') }}
       </b-button>
     </form>
   </div>

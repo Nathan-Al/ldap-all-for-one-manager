@@ -4,7 +4,7 @@
         <body>
             <trans-unit id="email_base_title">
                 <source>email.base.title</source>
-                <target>LDAP All-For-One Manager</target>
+                <target>LDAP One-For-All</target>
             </trans-unit>
             <trans-unit id="email_base_slogan">
                 <source>email.base.slogan</source>
@@ -16,15 +16,15 @@
             </trans-unit>
             <trans-unit id="email_base_discover">
                 <source>email.base.discover</source>
-                <target>Discover LDAP All-For-One Manager</target>
+                <target>Discover LDAP One-For-All</target>
             </trans-unit>
             <trans-unit id="email_base_manage">
                 <source>email.base.manage</source>
-                <target>Manage LDAP All-For-One Manager</target>
+                <target>Manage LDAP One-For-All</target>
             </trans-unit>
             <trans-unit id="email_base_footer">
                 <source>email.base.footer</source>
-                <target>LDAP All-For-One Manager © is a service of Monogramm. All rights reserved.</target>
+                <target>LDAP One-For-All © is a service of Monogramm. All rights reserved.</target>
             </trans-unit>
             <trans-unit id="email_verification_code_subject">
                 <source>email.verification.code.subject</source>
@@ -70,9 +70,21 @@
                 <source>error.user.username.already.taken</source>
                 <target>Username not available</target>
             </trans-unit>
+            <trans-unit id="error_user_registration_disabled">
+                <source>error.user.registration.disabled</source>
+                <target>User registration disabled!</target>
+            </trans-unit>
             <trans-unit id="error_common_invalid_json">
                 <source>error.common.invalid.json</source>
                 <target>Invalid JSON</target>
+            </trans-unit>
+            <trans-unit id="error_ldap_deserialize">
+                <source>error.ldap.deserialize</source>
+                <target>The LDAP entry it's not in a good format</target>
+            </trans-unit>
+            <trans-unit id="success_common_message">
+                <source>success.common.message</source>
+                <target>Success</target>
             </trans-unit>
         </body>
     </file>

@@ -6,38 +6,31 @@
       </h1>
     </div>
 
-    <section class="section box modules">
+    <section class="section box buttons modules">
       <b-button
+        v-for="route in routes" 
+        :key="route.path"
         tag="router-link"
-        to="/admin/users"
+        :to="route.path"
+        :icon-left="route.meta.adminDashboard.icon"
       >
-        {{ $t("admin.users") }}
-      </b-button>
-      <b-button
-        tag="router-link"
-        to="/admin/parameters"
-      >
-        {{ $t("admin.parameters") }}
-      </b-button>
-      <b-button
-        tag="router-link"
-        to="/admin/medias"
-      >
-        {{ $t("admin.medias") }}
-      </b-button>
-      <b-button
-        tag="router-link"
-        to="/admin/background-jobs"
-      >
-        {{ $t("admin.background-jobs") }}
+        {{ $t(route.meta.adminDashboard.label) }}
       </b-button>
     </section>
   </section>
 </template>
 
 <script lang="ts">
+import router from "../../store/router";
+
 export default {
   name: "AdminDashboard",
+  data(): any {
+    return {
+      // Automatically retrieve routes for admin dashboard
+      routes: router.getRoutes().filter(route => route.meta.adminDashboard),
+    };
+  },
   computed: {
     titleLabel() {
       return this.$t("admin.dashboard");

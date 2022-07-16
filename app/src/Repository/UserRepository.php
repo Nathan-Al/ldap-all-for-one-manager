@@ -3,17 +3,16 @@
 namespace App\Repository;
 
 use App\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Security\User\UserLoaderInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
  * @method User|null findOneBy(array $criteria, array $orderBy = null)
- * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class UserRepository extends ServiceEntityRepository
+class UserRepository extends AbstractServiceEntityRepository implements UserLoaderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -21,27 +20,25 @@ class UserRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param int $page Page number (starting at 1).
-     * @param int $size Page size.
+     * Loads the user for the given username or email.
      *
-     * @return Paginator
+     * This method must return null if the user is not found.
      *
-     * @psalm-return Paginator<mixed>
+     * @param string $username The username or email
+     *
+     * @return UserInterface|null
      */
-    public function findAllByPage(
-        int $page,
-        int $size
-    ): Paginator {
-        $offset = ($page - 1) * $size;
-
-        $query = $this->createQueryBuilder('p')
-            ->setFirstResult($offset)
-            ->setMaxResults($size);
-
-        return new Paginator($query, true);
+    public function loadUserByUsername($username): ?UserInterface
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.username = :query')
+            ->orWhere('u.email = :query')
+            ->setParameter('query', $username)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
-    public function findUsersByEmail(string $email)
+    public function findAllByEmail(string $email)
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.email = :email')
@@ -50,7 +47,7 @@ class UserRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findUsersByUserName(string $username)
+    public function findAllByUsername(string $username)
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.username = :username')
@@ -59,7 +56,7 @@ class UserRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByUsernamesWithSelectUsernameAndId(string $username): array
+    public function findAllLikeUsername(string $username): array
     {
         return $this->createQueryBuilder('u')
             ->where('u.username LIKE :username')

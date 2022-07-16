@@ -40,19 +40,23 @@ class ParameterController extends AbstractController
         $itemsPerPage = (int) $request->get('size', 20);
 
         $filters = json_decode($request->get('filters', '[]'), true);
-        $orders  = json_decode($request->get('orders', null), true);
+        $orders  = json_decode($request->get('orders', '{"name":"asc"}'), true);
 
-        $parameters = $repository->findAllByPage($page, $itemsPerPage, $filters, $orders);
+        if ($page > 0 && $itemsPerPage > 0) {
+            $parameters = $repository->findAllByPage($page, $itemsPerPage, $filters, $orders);
+        } else {
+            $parameters = $repository->findAll($filters, $orders);
+        }
 
         $total = count($parameters);
-        $parameters = $serializer->normalize(
+        $results = $serializer->normalize(
             $parameters,
             Parameter::class
         );
 
         return new JsonResponse([
             'total' => $total,
-            'items' => $parameters
+            'items' => $results
         ]);
     }
 
@@ -87,7 +91,7 @@ class ParameterController extends AbstractController
     public function createParameter(
         Request $request,
         SerializerInterface $serializer,
-        EntityManagerInterface $em,
+        EntityManagerInterface $emi,
         Encryptor $encryptor
     ): JsonResponse {
         $dto = $serializer->deserialize(
@@ -98,14 +102,14 @@ class ParameterController extends AbstractController
 
         if ($dto->isSecret()) {
             $dto->setValue(
-                $encryptor->decryptText(
+                $encryptor->encryptText(
                     $dto->getValue()
                 )
             );
         }
 
-        $em->persist($dto);
-        $em->flush();
+        $emi->persist($dto);
+        $emi->flush();
 
         return JsonResponse::fromJsonString(
             $serializer->serialize($dto, 'json')
@@ -119,7 +123,7 @@ class ParameterController extends AbstractController
      */
     public function editParameterById(
         Parameter $parameter,
-        EntityManagerInterface $em,
+        EntityManagerInterface $emi,
         Request $request,
         SerializerInterface $serializer,
         Encryptor $encryptor
@@ -142,8 +146,8 @@ class ParameterController extends AbstractController
             );
         }
 
-        $em->persist($dto);
-        $em->flush();
+        $emi->persist($dto);
+        $emi->flush();
 
         return JsonResponse::fromJsonString(
             $serializer->serialize($dto, 'json')
@@ -157,10 +161,10 @@ class ParameterController extends AbstractController
      */
     public function deleteParameter(
         Parameter $parameter,
-        EntityManagerInterface $em
+        EntityManagerInterface $emi
     ): JsonResponse {
-        $em->remove($parameter);
-        $em->flush();
+        $emi->remove($parameter);
+        $emi->flush();
 
         return new JsonResponse([]);
     }

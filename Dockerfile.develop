@@ -1,6 +1,6 @@
 FROM php:7.4-fpm
 
-ARG COMPOSER_VERSION=2.0.4
+ARG COMPOSER_VERSION=2.0.11
 
 # install the packages we need
 # install the PHP extensions we need
@@ -51,11 +51,16 @@ RUN set -ex; \
     docker-php-ext-configure gd; \
     docker-php-ext-configure intl; \
     docker-php-ext-configure zip; \
+    pecl install apcu; \
+    docker-php-ext-enable apcu; \
     pecl install amqp; \
     docker-php-ext-enable amqp; \
     pecl install libsodium; \
     docker-php-ext-enable sodium; \
     yes | pecl install xdebug; \
+    echo "xdebug.mode=debug\n" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+         "xdebug.idekey=\"DOCKER\"\n" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+         "xdebug.client_port=9003\n" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     docker-php-ext-enable xdebug; \
     docker-php-ext-install -j "$(nproc)" \
         bcmath \

@@ -1,16 +1,22 @@
 <template>
-  <app-parameters
-    :is-loading="isLoading"
-    :parameters="items"
-    :per-page="pagination.size"
-    :total="total"
-    @create="onCreate"
-    @edit="onEdit"
-    @delete="onDelete"
-    @pageChanged="onPageChange"
-    @filtersChanged="onFiltersChange"
-    @sortingChanged="onSortingChange"
-  />
+  <section class="section">
+    <h1 class="title is-1">
+      {{ $t("parameters.list") }}
+    </h1>
+
+    <app-parameters
+      :is-loading="isLoading"
+      :parameters="items"
+      :per-page="pagination.size"
+      :total="total"
+      @create="onCreate"
+      @edit="onEdit"
+      @delete="onDelete"
+      @pageChanged="onPageChange"
+      @filtersChanged="onFiltersChange"
+      @sortingChanged="onSortingChange"
+    />
+  </section>
 </template>
 
 <script lang="ts">
@@ -31,7 +37,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("parameter", ["items", "isLoading", "total"])
+    ...mapGetters("parameter", ["total", "items", "isLoading"])
   },
   created() {
     this.load();
@@ -40,17 +46,23 @@ export default {
     load() {
       this.$store.dispatch("parameter/getAll", this.pagination);
     },
-    onPageChange(page: string) {
+    onPageChange(page: number) {
       this.pagination.page = page;
-      this.load();
+      if (this.pagination.size > 0) {
+        this.load();
+      }
     },
     onFiltersChange(filters: any) {
       this.pagination.criteria = new Criteria(filters);
-      this.load();
+      if (this.pagination.size > 0) {
+        this.load();
+      }
     },
     onSortingChange(field: string, order: string) {
       this.pagination.orderBy = new Sort(field, order);
-      this.load();
+      if (this.pagination.size > 0) {
+        this.load();
+      }
     },
     onEdit(paramId: string) {
       this.$router.push({ name: "ParameterEdit", params: { id: paramId } });

@@ -2,26 +2,33 @@
   <section class="section">
     <div class="content">
       <h1 class="title is-1">
-        {{ $t("users.title") }}
+        {{ $t("users.list") }}
       </h1>
     </div>
 
-    <app-users
-      :users="items"
-      :is-loading="isLoading"
-      :total="total"
-      :per-page="pagination.size"
-      @pageChanged="onPageChange"
-      @edit="onEdit"
-      @create="onCreate"
-    />
+    <div class="box">
+      <app-users
+        :users="items"
+        :is-loading="isLoading"
+        :per-page="pagination.size"
+        :total="total"
+        @pageChanged="onPageChange"
+        @filtersChanged="onFiltersChange"
+        @sortingChanged="onSortingChange"
+        @enabled="onEnableChange"
+      />
+    </div>
   </section>
 </template>
 
 <script lang="ts">
 import { mapGetters } from "vuex";
 
-import { IPagination, Pagination } from "../../../../interfaces/pagination";
+import { Pagination } from "../../../../interfaces/pagination";
+import { Criteria } from "../../../../interfaces/criteria";
+import { Sort } from "../../../../interfaces/sort";
+
+import { EnablePayload } from '../../actions';
 
 import AppUsers from "../../components/admin/AppUsers/AppUsers.vue";
 
@@ -30,7 +37,6 @@ export default {
   components: { AppUsers },
   data() {
     return {
-      isFullPage: true,
       pagination: new Pagination(),
     };
   },
@@ -38,19 +44,50 @@ export default {
     ...mapGetters("user", ["items", "total", "isLoading"])
   },
   created() {
-    this.$store.dispatch("user/getAll", this.pagination);
+    this.load();
   },
   methods: {
-    onPageChange(page: number) {
-      this.pagination.page = page;
+    load() {
       this.$store.dispatch("user/getAll", this.pagination);
     },
-    onEdit(id: string) {
-      this.$router.push({ name: "UserEdit", params: { id: id } });
+    onPageChange(page: string) {
+      this.pagination.page = page;
+      if (this.pagination.size > 0) {
+        this.load();
+      }
     },
-    onCreate() {
-      this.$router.push({ name: "UserCreate" });
-    }
+    onFiltersChange(filters: any) {
+      this.pagination.criteria = new Criteria(filters);
+      if (this.pagination.size > 0) {
+        this.load();
+      }
+    },
+    onSortingChange(field: string, order: string) {
+      this.pagination.orderBy = new Sort(field, order);
+      if (this.pagination.size > 0) {
+        this.load();
+      }
+    },
+    onEnableChange(userId: string, enabled: boolean) {
+      this.$buefy.dialog.confirm({
+        message: this.$t(
+          enabled ? "users.enable" : "users.disable"
+        ),
+        confirmText: this.$t("common.continue"),
+        cancelText: this.$t("common.cancel"),
+        type: "is-info",
+        hasIcon: true,
+        onConfirm: () => {
+          const payload: EnablePayload = {
+            userId: userId,
+            enabled: enabled,
+          };
+          this.$store.dispatch("user/setEnable", payload).then(
+            () => this.load()
+          );
+        },
+      });
+    },
   }
 };
 </script>

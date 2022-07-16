@@ -12,7 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Currency
 {
-    use Metadata;
+    use EntityTrait;
 
     /**
      * @ORM\Column(type="string", length=50)
@@ -36,6 +36,9 @@ class Currency
         return $this->name;
     }
 
+    /**
+     * @return static
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -48,6 +51,9 @@ class Currency
         return $this->isoCode;
     }
 
+    /**
+     * @return static
+     */
     public function setIsoCode(string $isoCode): self
     {
         $this->isoCode = $isoCode;
